@@ -22,16 +22,19 @@
   - Connect a solar cell to a charge controller.
   - Connect the charge controller to the battery.
   - connect a 5v booster/regulator to the battery with output to the ATTINY.
+      A constant supply voltage is required as a refernece for the analog to digital conversion.
+      The ATTINY could be connected to the 4.2v cell, but the reference would change as the battery charge changes.
   - use a voltage divider on the + and - of the solar cell (or the charge controller input).
-      solar + 10k--------ATTINY (A3)---------2k  solar -
+      solar + 10k ohm--------ATTINY (A3)---------2k ohm solar - 
   - Connect the gate of a n-channel MOSFET to pin 0.
   - Connect the gate and drain of the MOSFET to the LED - and ground.
   - Connect the LED + to the battery +
-  - Connect ATTINY A1 to the batter + with a 1k current limiting resistor
-      ATTTINY A1 ---->  1k   -------> Battery +
+  - Connect ATTINY A1 to the battery + with a 1k ohm current limiting resistor
+      ATTTINY A1 ---->  1k ohm   -------> Battery +
       This allows the ATTINTY to be programmed without problems
-  - connect all the grounds
-      battery, solar cell, ATTINY, etc.
+  - connect all the grounds together
+      battery, solar cell, and ATTINY
+      don't connect the LED - to ground. This goes through the N channel MOSFET.
   
      
 
@@ -41,9 +44,6 @@
 
 
 */
-
-
-
 // todo : increase sleep cycles  -- shoot for 8 mins (about 64 cycles)
 //        delay after sunset before going on -- and/or lower sun threshold
 //        put a maximum time on light on -- like 3 hours
