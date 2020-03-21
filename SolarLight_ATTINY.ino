@@ -15,8 +15,8 @@
   For monitoring, SendOnlySoftwareSerial is used to send a 9600 baud output stream.
   Connect this to an FTDI USB interface or another Arduino to monitor the stream.
   
-
-
+  You can get the SendOnlySoftwareSerial library at https://github.com/nickgammon/SendOnlySoftwareSerial.
+  
   Circuit:
   - ATTINY85
   - Connect a solar cell to a charge controller.
