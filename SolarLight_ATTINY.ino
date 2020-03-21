@@ -27,7 +27,7 @@
   - use a voltage divider on the + and - of the solar cell (or the charge controller input).
       solar + 10k ohm--------ATTINY (A3)---------2k ohm solar - 
   - Connect the gate of a n-channel MOSFET to pin 0.
-  - Connect the gate and drain of the MOSFET to the LED - and ground.
+  - Connect the source and drain of the MOSFET to the LED - and ground.
   - Connect the LED + to the battery +
   - Connect ATTINY A1 to the battery + with a 1k ohm current limiting resistor
       ATTTINY A1 ---->  1k ohm   -------> Battery +
