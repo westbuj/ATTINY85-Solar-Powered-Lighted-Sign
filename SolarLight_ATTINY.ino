@@ -1,13 +1,64 @@
+/*
+  Solar Powered Lighted Sign
+
+  This sketch uses an ATTINY85 to monitor a 6v solar cell and 4.2v battery.
+
+  When the sun goes down (solar cell voltage is low), a PWM signal is sent to a
+  MOSFET. The MOSFET is connected to an LED. When battery voltage drops below about 
+  3.2 v, the signal to the MOSFET is stopped and the LED is turned off.
+
+  When the LED is OFF, the ATTINY is put into sleep-power down to save battery power.
+
+  Because the solar cell is 6v, a voltage divider is required to bring the voltage into
+  range for the analog input.
+
+  For monitoring, SendOnlySoftwareSerial is used to send a 9600 baud output stream.
+  Connect this to an FTDI USB interface or another Arduino to monitor the stream.
+  
+
+
+  Circuit:
+  - ATTINY85
+  - Connect a solar cell to a charge controller.
+  - Connect the charge controller to the battery.
+  - connect a 5v booster/regulator to the battery with output to the ATTINY.
+  - use a voltage divider on the + and - of the solar cell (or the charge controller input).
+      solar + 10k--------ATTINY (A3)---------2k  solar -
+  - Connect the gate of a n-channel MOSFET to pin 0.
+  - Connect the gate and drain of the MOSFET to the LED - and ground.
+  - Connect the LED + to the battery +
+  - Connect ATTINY A1 to the batter + with a 1k current limiting resistor
+      ATTTINY A1 ---->  1k   -------> Battery +
+      This allows the ATTINTY to be programmed without problems
+  - connect all the grounds
+      battery, solar cell, ATTINY, etc.
+  
+     
+
+  created 3 Mar 2020
+  by John Westbury
+
+
+
+*/
+
+
+
+// todo : increase sleep cycles  -- shoot for 8 mins (about 64 cycles)
+//        delay after sunset before going on -- and/or lower sun threshold
+//        put a maximum time on light on -- like 3 hours
+//        determin battery shut off -- about 3.2 v
+
+
 #include <SendOnlySoftwareSerial.h>
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 
-#define Solar_Pin A1
-#define Battery_Pin A3
+
+#define Solar_Pin A3
+#define Battery_Pin A1
 #define MOSFET_Pin 0
-#define SLEEP_CYCLES 10   // Each Cycle is eight seconds
-
-
+#define SLEEP_CYCLES 1   // Each Cycle is eight seconds
 
 SendOnlySoftwareSerial Serial (4);
 
@@ -18,7 +69,7 @@ void setup() {
   
 }
 
-// the loop function runs over and over again forever
+
 void loop() {
 
   delay(200);
@@ -34,7 +85,7 @@ void loop() {
   if (sunValue<500 && batValue > 600)
   {
     Serial.println("ON");
-    analogWrite(MOSFET_Pin,255);
+    analogWrite(MOSFET_Pin,32);
     delay(5000);
   }
   if (sunValue>500  || batValue < 600)
@@ -52,12 +103,17 @@ void loop() {
   Serial.println("back");
 }
 
+//This function is called when the watchdog timer expires. 
+
 ISR(WDT_vect) {
     
     wdt_disable();  // disable watchdog
     
 }
 
+//This function puts the ATTINY in sleep mode for 8 seconds.
+//To save power, the ADCs are explicitly shutdown.
+ 
 void shutDown_with_WD(const byte time_len)
   {
 
