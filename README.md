@@ -34,4 +34,4 @@ Arduino code for ATTINY 85. Two analog inputs are used to sense voltage from a s
       don't connect the LED - to ground. This connection goes through the N channel MOSFET.
   
 The ATTINY85 does not have Serial output. We are tricking the IDE by declaring a 
-SendOnlySoftwareSerial called Serial.
+SendOnlySoftwareSerial called Serial.   
