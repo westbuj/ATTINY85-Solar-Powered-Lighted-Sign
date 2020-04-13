@@ -38,8 +38,6 @@ SendOnlySoftwareSerial called Serial.
      
   created 3 Mar 2020
   by John Westbury
-
-  todo
 */
 
 
@@ -53,6 +51,9 @@ SendOnlySoftwareSerial called Serial.
 #define Battery_Pin A1
 #define MOSFET_Pin 0
 #define SLEEP_CYCLES 72   // Each Cycle is eight seconds
+#define sunLevelToTurnOn 300
+#define sunLevelToReset 500
+#define batteryLevelToShutoff 700
 
 SendOnlySoftwareSerial Serial (4);
 
@@ -65,6 +66,8 @@ void setup() {
 
 
 bool allowLED = true;
+long onTime = 0; //9000 seconds is 2.5 hours
+
 
 void loop() {
     Serial.println("LOOP Begin----");
@@ -78,8 +81,12 @@ void loop() {
    
   }
 
-  if (sunValue >= 500) allowLED = true;  
-  if (batValue <  700) allowLED = false;
+  if (sunValue >= sunLevelToReset) allowLED = true;  
+  if (batValue <  batteryLevelToShutoff) allowLED = false;
+  if (onTime > 900) {
+    allowLED = false;
+    onTime=0;
+  }
   
   Serial.print("S V = ");
   Serial.println(sunValue);
@@ -87,16 +94,19 @@ void loop() {
   Serial.println(batValue);
   Serial.print("ALLOW = ");
   Serial.println(allowLED);
+  Serial.print("ON TIME = ");
+  Serial.println(onTime);
 
   
-  if (sunValue < 400 && batValue > 700 && allowLED)
+  if (sunValue < sunLevelToTurnOn && batValue > batteryLevelToShutoff && allowLED)
   {
     Serial.println("ON - delay");
-    analogWrite(MOSFET_Pin,32);
+    analogWrite(MOSFET_Pin,24); //light on at 24/255 duty cycle
     delay(5000);
+    onTime++; // 2.5 hours max on time)
   }
    
-  if (sunValue>400  || batValue < 700)
+  if (sunValue > sunLevelToTurnOn  || batValue < batteryLevelToShutoff || !allowLED)
   {
     Serial.println("OFF - SLEEP");
     
